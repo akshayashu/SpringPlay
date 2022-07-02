@@ -1,22 +1,52 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+import { globalStyles } from '../styles/GlobalStyle';
+import { Dimensions } from 'react-native';
 
-export default function SongListPreview({ item, pressHandler }) {
+export default function SongListPreview({ item }) {
+
+	const [song, setsong] = useState([]);
+
+	if (song.length == 0 && item.songsList) {
+		setsong(item.songsList);
+	}
 
 	return (
-		<TouchableOpacity onPress={() => pressHandler(item.id)}>
-			<Text style={styles.listText}>{item.name}</Text>
-		</TouchableOpacity>
+		<View >
+			<Text style={[globalStyles.textWhiteBold24, { marginTop: 20 }]}>{item.name}</Text>
+
+			{item && item.songsList ?
+				<FlatList
+					horizontal
+					pagingEnabled={true}
+					showsHorizontalScrollIndicator={false}
+					legacyImplementation={false}
+					style={[{ marginTop: 10 }]}
+					keyExtractor={(item) => item.id}
+					data={song}
+					renderItem={({ item }) => (
+						<View style={{ marginRight: 15 }}>
+
+							<ImageBackground
+								source={item.url}
+								style={styles.coverImage}
+								resizeMode='cover'
+							/>
+							<Text style={[globalStyles.textWhite16, { padding: 0, marginBottom: 0 }]}>{item.name}</Text>
+							<Text style={[globalStyles.textGray16, { padding: 0, marginTop: 0 }]}>{item.artists}</Text>
+						</View>
+					)}
+				/>
+				:
+				<Text style={globalStyles.textWhite16}>Loading Data...</Text>
+				}
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
-	listText: {
-		color: '#fff',
-		fontSize: 16,
-		padding: 20,
-		marginHorizontal: 20,
-		marginTop: 20,
-		backgroundColor: '#21c45a'
-	}
+	coverImage: {
+		height: Dimensions.get('window').height / 4.5,
+		width: Dimensions.get('window').height / 4.5,
+	},
 });

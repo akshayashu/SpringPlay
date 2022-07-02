@@ -2,41 +2,34 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context' 
 import SongListPreview from '../components/SongListPreview';
+import { globalStyles } from '../styles/GlobalStyle';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import * as JsonData from '../models/JsonData';
 
 export default function App() {
 
-	const [songs, setSongs] = useState([
-		{ name: 'Journey Song', id: "1" },
-		{ name: 'Journey Song1', id: "27" },
-		{ name: 'Journey Song2', id: "3" },
-		{ name: 'Journey Song3', id: "4" },
-		{ name: 'Journey Song4', id: "5" },
-		{ name: 'Journey Song5', id: "6" },
-		{ name: 'Journey Song6', id: "7" },
-		{ name: 'Journey Song5', id: "8" },
-		{ name: 'Journey Song6', id: "9" },
-	]);
+	const [category, setCategory] = useState(JsonData.category);
 
-	const pressHandler = (id) => {
-
-		// removing the item that is clicked
-		setSongs((prevSongs) => {
-			// true means filter it out
-			// false means keep that item
-			return prevSongs.filter(song => song.id != id);
-		})
-
-	}
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
-			<View style={styles.container}>
+		<SafeAreaView style={globalStyles.container}>
+      <View style={[globalStyles.container20, {paddingRight: 0}]}>
+
+				{/* Header */}
+				<View style={globalStyles.flexRow}>
+					<Text style={[globalStyles.textWhiteBold24, {flex: 1}]}>Good evening</Text>
+					<View style={[globalStyles.flexRow, {marginRight: 10}]}>
+						<Ionicons name='notifications' size={24} color='white' style={globalStyles.padding8}/>
+						<Ionicons name='timer-outline' size={24} color='white' style={globalStyles.padding8}/>
+						<Ionicons name='settings-outline' size={24} color='white' style={globalStyles.padding8}/>
+					</View>
+				</View>
 
 				<FlatList
-					numColumns={2}
+					style={[{marginTop: 20}]}
 					keyExtractor={(item) => item.id}
-					data={songs}
+					data={category}
 					renderItem={({ item }) => (
-						<SongListPreview item={item} pressHandler={pressHandler} />
+						<SongListPreview item={item} />
 					)}
 				/>
 

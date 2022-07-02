@@ -30,6 +30,7 @@ export default function LoginScreen({ navigation }) {
           name='arrow-back'
           size={24}
           color='white'
+          onPress={() => navigation.pop()}
         />
         {/* email area */}
         <Text style={[globalStyles.textWhiteBold30, { marginTop: 20 }]}>Email or username</Text>

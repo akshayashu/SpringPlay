@@ -63,6 +63,50 @@ export const globalStyles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 5
   },
+  textGray16: {
+    fontSize: 16,
+    color: 'gray',
+    margin: 5
+  },
+  textWhite20: {
+    fontSize: 20,
+    color: '#fff',
+    margin: 5
+  },
+  textWhite24: {
+    fontSize: 24,
+    color: '#fff',
+    margin: 5
+  },
+  textWhite30: {
+    fontSize: 30,
+    color: '#fff',
+    margin: 5
+  },
+  textWhiteBold16: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
+    margin: 5
+  },
+  textWhiteBold20: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: 'bold',
+    margin: 5
+  },
+  textWhiteBold24: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
+    margin: 5
+  },
+  textWhiteBold30: {
+    fontSize: 30,
+    color: '#fff',
+    fontWeight: 'bold',
+    margin: 5
+  },
   textBlack16: {
     fontSize: 16,
     color: '#000',
@@ -143,5 +187,8 @@ export const globalStyles = StyleSheet.create({
   },
   padding5: {
     padding: 5,
+  },
+  padding8: {
+    padding: 8,
   }
 })
