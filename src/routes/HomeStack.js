@@ -4,6 +4,8 @@ import HomeScreen from '../screens/HomeScreen'
 import SongScreen from '../screens/SongScreen'
 import LoginScreen from '../screens/LoginScreen';
 import AuthenticationScreen from '../screens/AuthenticationScreen'
+import BaseScreen from "../screens/BaseScreen";
+import PlaySong from "../screens/PlaySong";
 
 
 const screens = {
@@ -19,6 +21,12 @@ const screens = {
       headerShown: false,
     }
   },
+  BaseScreen: {
+    screen: BaseScreen,
+    navigationOptions: {
+      headerShown: false,
+    }
+  },
   HomeScreen: {
     screen: HomeScreen,
     navigationOptions: {
@@ -27,6 +35,12 @@ const screens = {
   },
   SongScreen: {
     screen: SongScreen,
+    navigationOptions: {
+      headerShown: false,
+    }
+  },
+  PlaySong: {
+    screen: PlaySong,
     navigationOptions: {
       headerShown: false,
     }

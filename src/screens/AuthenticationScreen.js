@@ -31,8 +31,8 @@ export default function AuthenticationScreen({ navigation }) {
           resizeMode='cover'
         >
           <LinearGradient
-            colors={['rgba(0,0,0,0.00)', 'rgba(0,0,0,1)']}
-            style={styles.gradientBackground}
+            colors={['rgba(0,0,0,0.00)', 'rgba(18,18,18,1)']}
+            style={globalStyles.gradientBackground}
           />
 
           <View style={styles.upperView}>
@@ -88,14 +88,6 @@ export default function AuthenticationScreen({ navigation }) {
 const styles = StyleSheet.create({
   backImage: {
     height: Dimensions.get('window').height / 1.5,
-  },
-  gradientBackground: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    height: '100%',
-    width: '100%'
   },
   upperView: {
     flex: 1,

@@ -13,6 +13,10 @@ export default function LoginScreen({ navigation }) {
     setPasswordVisible(!passwordVisible)
   }
 
+  const GoToBaseScreen = () => {
+    navigation.navigate('BaseScreen');
+  }
+
   const GoToHomeScreen = () => {
     navigation.navigate('HomeScreen');
   }
@@ -36,15 +40,15 @@ export default function LoginScreen({ navigation }) {
         <Text style={[globalStyles.textWhiteBold30, { marginTop: 20 }]}>Email or username</Text>
         <TextInput
           placeholder='Username'
-          style={globalStyles.textInput20}
+          style={globalStyles.textInputGray20}
         />
 
         {/* password area */}
         <Text style={[globalStyles.textWhiteBold30, { marginTop: 20 }]}>Password</Text>
-        <View style={[globalStyles.textInput20, globalStyles.flexRow]}>
+        <View style={[globalStyles.textInputGray20, globalStyles.flexRow]}>
           <TextInput
             placeholder='Password'
-            style={[globalStyles.textInput20, { flex: 1, padding: 0, margin: 0 }]}
+            style={[globalStyles.textInputGray20, { flex: 1, padding: 0, margin: 0 }]}
             secureTextEntry={passwordVisible}
           />
           <Ionicons name={passwordVisible ? 'eye' : 'eye-off'} size={20} color="white" onPress={passwordHandler} />
@@ -52,13 +56,12 @@ export default function LoginScreen({ navigation }) {
 
         <TouchableOpacity
           style={[globalStyles.btnGrey, { flex: 0, alignSelf: 'center' }]}
-          onPress={GoToHomeScreen}
+          onPress={GoToBaseScreen}
         >
           <Text style={globalStyles.textBlack20}>Log in</Text>
         </TouchableOpacity>
 
         <Text style={[globalStyles.textWhite16, { alignSelf: 'center', padding: 20 }]}>Forgot password?</Text>
-
       </View>
     </SafeAreaView>
 
