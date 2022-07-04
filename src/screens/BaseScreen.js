@@ -6,7 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import HomeScreen from './HomeScreen';
 import SearchScreen from './SearchScreen';
 import LibraryScreen from './LibraryScreen';
-import { LinearGradient } from 'expo-linear-gradient'
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function BaseScreen({ navigation }) {
 
