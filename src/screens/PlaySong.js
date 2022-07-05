@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider';
 import { DIMENS } from '../styles/Dimens';
 import { COLORS } from '../styles/Color';
+import { Audio, AVPlaybackStatus, Video } from 'expo-av';
 
 
 export default function PlaySong({ navigation }) {
@@ -16,6 +17,9 @@ export default function PlaySong({ navigation }) {
   const [songURL, setURL] = useState(null);
   const [songLength, setSongLength] = useState(4 * 60 + 32);
   const [curLength, setCurLength] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [isChanging, setIsChanging] = useState(false);
+  const [status, setStatus] = useState({})
 
   if (songName.length == 0 && navigation) {
     setSong(navigation.getParam('name'));
@@ -30,12 +34,58 @@ export default function PlaySong({ navigation }) {
 
   function convertTime(length) {
     let min = Math.floor(length / 60)
-    let sec = pad(length % 60, 2)
+    let sec = pad(Math.floor(length % 60), 2)
 
     return min + ":" + sec;
   }
 
+  function getPlayingPercent() {
+    console.log(Math.round(curLength / songLength));
+    return (curLength / songLength);
+  }
+
+  const seek = (time) => {
+    time = Math.round(time);
+    audioElement && audioElement.seek(time);
+    setCurLength(time);
+    setPaused(false);
+  }
+
+  // const audio = isChanging ? null : (
+  //   <Audio 
+  //     source={{uri: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/92/b2/9b/92b29b2b-739a-a9e4-d035-07f69f8759bd/mzaf_980294366142313263.plus.aac.ep.m4a"}} // Can be a URL or a local file.
+  //     isLooping={paused}
+  //     onLoad={(data) => setDuration(data)}
+  //     onProgress={(data) => setTime(data)}
+  //     style={{height: 0, width: 0}}
+  //   />
+  // )
+
+  const video = (
+    <Video
+      ref={video}
+      style={styles.video}
+      source={{
+        uri: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/92/b2/9b/92b29b2b-739a-a9e4-d035-07f69f8759bd/mzaf_980294366142313263.plus.aac.ep.m4a"
+      }} // Can be a URL or a local file.
+      useNativeControls
+      resizeMode="contain"
+      isLooping
+      onLoad={status => {
+        setSongLength(status.durationMillis / 1000)
+        // console.log(status.playableDurationMillis)
+      }}
+      onPlaybackStatusUpdate={status => {
+        setStatus(() => status)
+        setCurLength(status.positionMillis / 1000)
+        // console.log(status.positionMillis/ 1000)
+      }}
+      shouldPlay={true}
+    />
+  );
+
   return (
+
     <SafeAreaView style={globalStyles.container}>
 
       <LinearGradient
@@ -57,7 +107,7 @@ export default function PlaySong({ navigation }) {
                   size={24}
                   color='white'
                 />
-                <Text style={[globalStyles.textWhiteBold16, {marginTop: 10}]}>Now Playing</Text>
+                <Text style={[globalStyles.textWhiteBold16, { marginTop: 10 }]}>Now Playing</Text>
                 <Ionicons
                   name='ellipsis-vertical'
                   size={24}
@@ -92,12 +142,11 @@ export default function PlaySong({ navigation }) {
                 maximumValue={1}
                 minimumTrackTintColor={COLORS.white}
                 maximumTrackTintColor={COLORS.lightGray}
-                onValueChange={value => {
-                  setCurLength(parseInt(value * songLength));
-                }
-                }
+                value={getPlayingPercent()}
                 thumbTintColor={COLORS.white}
-                onSlidingComplete={() => { }}
+                onSlidingComplete={(data) => {
+                  console.log(data);
+                }}
               />
 
               <View style={[globalStyles.flexRow, { width: '100%', justifyContent: 'space-between', margin: 0 }]}>
@@ -133,20 +182,21 @@ export default function PlaySong({ navigation }) {
                 />
               </View>
 
-              <View style={[globalStyles.containerCenter, {flex: 1}]}>
+              <View style={[globalStyles.containerCenter, { flex: 1 }]}>
 
-                <ImageBackground 
-                  style={{width: DIMENS.width - 40, margin: 20, backgroundColor: COLORS.teal, borderRadius: 20}}
+                <ImageBackground
+                  style={{ width: DIMENS.width - 40, margin: 20, backgroundColor: COLORS.teal, borderRadius: 20 }}
                 >
-                  <Text style={[globalStyles.textWhiteBold20, {margin: 20}]}>Lyrics</Text>
-                  <Text style={[globalStyles.textWhite16, {marginTop: 40, alignSelf: 'center'}]}>We will implement this part later</Text>
-                  <Text style={[globalStyles.textWhite20, {marginTop: 10, alignSelf: 'center'}]}>We will implement this part later</Text>
-                  <Text style={[globalStyles.textWhiteBold20, {marginTop: 5, alignSelf: 'center'}]}>We will implement this part later</Text>
-                  <Text style={[globalStyles.textWhite20, {marginTop: 5, alignSelf: 'center'}]}>We will implement this part later</Text>
-                  <Text style={[globalStyles.textWhite16, {marginTop: 10, marginBottom: 50, alignSelf: 'center'}]}>We will implement this part later</Text>
-                  
+                  <Text style={[globalStyles.textWhiteBold20, { margin: 20 }]}>Lyrics</Text>
+                  <Text style={[globalStyles.textWhite16, { marginTop: 40, alignSelf: 'center' }]}>We will implement this part later</Text>
+                  <Text style={[globalStyles.textWhite20, { marginTop: 10, alignSelf: 'center' }]}>We will implement this part later</Text>
+                  <Text style={[globalStyles.textWhiteBold20, { marginTop: 5, alignSelf: 'center' }]}>We will implement this part later</Text>
+                  <Text style={[globalStyles.textWhite20, { marginTop: 5, alignSelf: 'center' }]}>We will implement this part later</Text>
+                  <Text style={[globalStyles.textWhite16, { marginTop: 10, marginBottom: 50, alignSelf: 'center' }]}>We will implement this part later</Text>
+
                 </ImageBackground>
               </View>
+              {video}
             </View>
             :
             <Text>Loading..</Text>
