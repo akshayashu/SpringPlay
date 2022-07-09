@@ -6,7 +6,7 @@ import LoginScreen from '../screens/LoginScreen';
 import AuthenticationScreen from '../screens/AuthenticationScreen'
 import BaseScreen from "../screens/BaseScreen";
 import PlaySong from "../screens/PlaySong";
-
+import test from "../screens/test";
 
 const screens = {
   AuthenticationScreen: {
@@ -45,6 +45,12 @@ const screens = {
       headerShown: false,
     }
   },
+  test: {
+    screen: test,
+    navigationOptions: {
+      headerShown: false,
+    }
+  }
 }
 
 const HomeStack = createStackNavigator(screens);

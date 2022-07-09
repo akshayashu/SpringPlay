@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, ImageBackground, ScrollView, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { globalStyles } from '../styles/GlobalStyle';
@@ -8,7 +8,19 @@ import Slider from '@react-native-community/slider';
 import { DIMENS } from '../styles/Dimens';
 import { COLORS } from '../styles/Color';
 import { Audio, AVPlaybackStatus, Video } from 'expo-av';
+import SongPlayer from '../helper/SongPlayer';
 
+const LOOPING_TYPE_ALL = 0;
+const LOOPING_TYPE_ONE = 1;
+
+const { width: DEVICE_WIDTH, height: DEVICE_HEIGHT } = Dimensions.get("window");
+const BACKGROUND_COLOR = "#FFF8ED";
+const DISABLED_OPACITY = 0.5;
+const FONT_SIZE = 14;
+const LOADING_STRING = "... loading ...";
+const BUFFERING_STRING = "...buffering...";
+const RATE_SCALE = 3.0;
+const VIDEO_CONTAINER_HEIGHT = (DEVICE_HEIGHT * 2.0) / 5.0 - FONT_SIZE * 2;
 
 export default function PlaySong({ navigation }) {
 
@@ -19,8 +31,29 @@ export default function PlaySong({ navigation }) {
   const [curLength, setCurLength] = useState(0);
   const [paused, setPaused] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
-  const [status, setStatus] = useState({})
-
+  const [status, setStatus] = useState({
+    showVideo: false,
+    playbackInstanceName: LOADING_STRING,
+    loopingType: LOOPING_TYPE_ALL,
+    muted: false,
+    playbackInstancePosition: null,
+    playbackInstanceDuration: null,
+    shouldPlay: false,
+    isPlaying: false,
+    isBuffering: false,
+    isLoading: true,
+    fontLoaded: false,
+    shouldCorrectPitch: true,
+    volume: 1.0,
+    rate: 1.0,
+    videoWidth: DEVICE_WIDTH,
+    videoHeight: VIDEO_CONTAINER_HEIGHT,
+    poster: false,
+    useNativeControls: false,
+    fullscreen: false,
+    throughEarpiece: false
+  });
+  
   if (songName.length == 0 && navigation) {
     setSong(navigation.getParam('name'));
     setArtist(navigation.getParam('artists'));
@@ -40,8 +73,7 @@ export default function PlaySong({ navigation }) {
   }
 
   function getPlayingPercent() {
-    console.log(Math.round(curLength / songLength));
-    return (curLength / songLength);
+    return curLength;
   }
 
   const seek = (time) => {
@@ -51,38 +83,14 @@ export default function PlaySong({ navigation }) {
     setPaused(false);
   }
 
-  // const audio = isChanging ? null : (
-  //   <Audio 
-  //     source={{uri: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/92/b2/9b/92b29b2b-739a-a9e4-d035-07f69f8759bd/mzaf_980294366142313263.plus.aac.ep.m4a"}} // Can be a URL or a local file.
-  //     isLooping={paused}
-  //     onLoad={(data) => setDuration(data)}
-  //     onProgress={(data) => setTime(data)}
-  //     style={{height: 0, width: 0}}
-  //   />
-  // )
-
-  const video = (
-    <Video
-      ref={video}
-      style={styles.video}
-      source={{
-        uri: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/92/b2/9b/92b29b2b-739a-a9e4-d035-07f69f8759bd/mzaf_980294366142313263.plus.aac.ep.m4a"
-      }} // Can be a URL or a local file.
-      useNativeControls
-      resizeMode="contain"
-      isLooping
-      onLoad={status => {
-        setSongLength(status.durationMillis / 1000)
-        // console.log(status.playableDurationMillis)
-      }}
-      onPlaybackStatusUpdate={status => {
-        setStatus(() => status)
-        setCurLength(status.positionMillis / 1000)
-        // console.log(status.positionMillis/ 1000)
-      }}
-      shouldPlay={true}
-    />
-  );
+  const { playbackObject } = Audio.Sound.createAsync(
+    {
+      uri: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/92/b2/9b/92b29b2b-739a-a9e4-d035-07f69f8759bd/mzaf_980294366142313263.plus.aac.ep.m4a"
+    },
+    { shouldPlay: true }
+  ).then(async () => {
+    console.log(await playbackObject.getStatusAsync());
+  });
 
   return (
 
@@ -139,13 +147,21 @@ export default function PlaySong({ navigation }) {
               <Slider
                 style={{ width: DIMENS.width - 20, height: 20, marginTop: 30 }}
                 minimumValue={0}
-                maximumValue={1}
+                maximumValue={songLength}
                 minimumTrackTintColor={COLORS.white}
                 maximumTrackTintColor={COLORS.lightGray}
                 value={getPlayingPercent()}
                 thumbTintColor={COLORS.white}
                 onSlidingComplete={(data) => {
-                  console.log(data);
+                  // video.current.playFromPositionAsync(data);
+                  if (paused) {
+                    video.current.pauseAsync();
+                    setPaused(!paused)
+                  } else {
+                    video.current.playAsync();
+                    setPaused(!paused)
+                  }
+
                 }}
               />
 
@@ -196,7 +212,7 @@ export default function PlaySong({ navigation }) {
 
                 </ImageBackground>
               </View>
-              {video}
+              {/* {videoComponent} */}
             </View>
             :
             <Text>Loading..</Text>
